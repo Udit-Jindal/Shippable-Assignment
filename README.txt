@@ -19,6 +19,6 @@ Secondly, the API design rightnow will work for only open cases and a lot of thi
 This API could be made more generic.
 Also error handling at various points is missing. This should have been handled more efficiently.
 
-
+The code is hosted on AWS. Below is the URL.
 
 URL:-- http://52.74.46.210/Shippable-Assignment/index.html
