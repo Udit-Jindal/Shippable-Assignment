@@ -19,6 +19,7 @@
  */
 // Setting default timezone
 date_default_timezone_set('UTC');
+error_reporting(0);
 $strInputURL = $_GET["url"];
 $strInputURL = convertURL($strInputURL);
 // Getting open Issue List
