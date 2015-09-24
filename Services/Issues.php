@@ -25,18 +25,19 @@ $arrNewIssueList = array();
 
 $intTotalIssueCount = 0;
 foreach ($arrIssueList AS $key => $value) {
-    $arrNewIssueList['id'] = $arrIssueList['id'];
-    $arrNewIssueList['title'] = $arrIssueList['title'];
-    $arrNewIssueList['url'] = $arrIssueList['url'];
-    $dateCreatedDate = $arrIssueList['created_at'];
+    $arrTemp['id'] = $value['id'];
+    $arrTemp['title'] = $value['title'];
+    $arrTemp['url'] = $value['url'];
+    $dateCreatedDate = $value['created_at'];
 
     $dateCreatedDate = str_replace("T", " ", $dateCreatedDate);
     $dateCreatedDate = str_replace("Z", "", $dateCreatedDate);
-    $arrNewIssueList['created_at'] = $dateCreatedDate;
+    $arrTemp['created_at'] = $dateCreatedDate;
     $arrTimeDifference = getTimeDiff($dateCreatedDate);
-    $arrNewIssueList['diffInHours'] = $arrTimeDifference['hours'];
-    $arrNewIssueList['diffInDays'] = $arrTimeDifference['days'];
+    $arrTemp['diffInHours'] = $arrTimeDifference;
+	array_push($arrNewIssueList, $arrTemp);
     $intTotalIssueCount++;
+
 }
 
 $arrResponse = array();
@@ -48,10 +49,10 @@ foreach ($arrNewIssueList AS $key => $value) {
     if ($value['diffInHours'] <= 24) {
         $intTotalIssueIn24Hours++;
     }
-    if ($value['diffInHours'] > 24 && $value['diffInDays'] <= 7) {
+    if ($value['diffInHours'] > 24 && $value['diffInHours'] <= 168) {
         $intTotalIssueIn7Days++;
     }
-    if ($value['diffInDays'] > 7) {
+    if ($value['diffInHours'] > 168) {
         $intTotalIssueBefore7Days++;
     }
 }
@@ -81,7 +82,7 @@ function getIssueList()
     $jsonResponse = curl_exec($curl);
     // Close request
     curl_close($curl);
-    return json_decode($jsonResponse);
+    return json_decode($jsonResponse,true);
 }
 
 /**
@@ -99,10 +100,7 @@ function getTimeDiff($strInputDate)
         $intDays = $objDiff->days;
         $intHours = $objDiff->h + ($intDays * 24);
     } catch (Exception $e) {
-        $intDays = 0;
         $intHours = 0;
     }
-    $arrResponse['Days'] = $intDays;
-    $arrResponse['Hours'] = $intHours;
-    return $arrResponse;
+    return $intHours;
 }
