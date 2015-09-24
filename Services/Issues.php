@@ -19,10 +19,16 @@
  */
 // Setting default timezone
 date_default_timezone_set('UTC');
+$strInputURL = $_GET["url"];
+$strInputURL = convertURL($strInputURL);
 // Getting open Issue List
-$arrIssueList = getIssueList();
-$arrNewIssueList = array();
+$arrIssueList = getIssueList($strInputURL);
+if($arrIssueList['message'] == "Not Found" || isset($arrIssueList[0]['id'])!=1 ){
+    echo json_encode(array("code"=>0,"description"=>"Problem with URL","data"=>array()));
+    die;
+}
 
+$arrNewIssueList = array();
 $intTotalIssueCount = 0;
 foreach ($arrIssueList AS $key => $value) {
     $arrTemp['id'] = $value['id'];
@@ -35,7 +41,7 @@ foreach ($arrIssueList AS $key => $value) {
     $arrTemp['created_at'] = $dateCreatedDate;
     $arrTimeDifference = getTimeDiff($dateCreatedDate);
     $arrTemp['diffInHours'] = $arrTimeDifference;
-	array_push($arrNewIssueList, $arrTemp);
+    array_push($arrNewIssueList, $arrTemp);
     $intTotalIssueCount++;
 
 }
@@ -56,26 +62,34 @@ foreach ($arrNewIssueList AS $key => $value) {
         $intTotalIssueBefore7Days++;
     }
 }
-$arrResponse ['total'] = $intTotalIssueCount;
-$arrResponse ['last24Hours'] = $intTotalIssueIn24Hours;
-$arrResponse ['thisWeek'] = $intTotalIssueIn7Days;
-$arrResponse ['beforeThisWeek'] = $intTotalIssueBefore7Days;
+$arrResponse ['code'] = 1;
+$arrResponse ['description'] = 'Success';
+$arrResponse ['data']['total'] = $intTotalIssueCount;
+$arrResponse ['data']['last24Hours'] = $intTotalIssueIn24Hours;
+$arrResponse ['data']['thisWeek'] = $intTotalIssueIn7Days;
+$arrResponse ['data']['beforeThisWeek'] = $intTotalIssueBefore7Days;
 
 echo json_encode($arrResponse);
 die;
+
+function convertURL($strInputURL){
+
+    $strOutputURL = str_replace("github.com", "api.github.com/repos", $strInputURL).'?state=open';
+    return $strOutputURL;
+}
 
 /**
  * Function will get the list of all issues.
  * @return Array containing the list of issues
  */
-function getIssueList()
+function getIssueList($strInputURL)
 {
     // Get cURL resource
     $curl = curl_init();
     // Set some options - passing uditjindal3@yahoo.com as user agent
     curl_setopt_array($curl, array(
         CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_URL => 'https://api.github.com/repos/Shippable/support/issues?state=open',
+        CURLOPT_URL => $strInputURL,
         CURLOPT_USERAGENT => 'uditjindal3@yahoo.com'
     ));
     // Send the request

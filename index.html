@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <title></title>
+</head>
+<body>
+<div style="margin-left: 30%;">
+
+    <input type="text" width="500px" id="URL"/>
+    <button onclick="submit()">Calculate</button>
+
+</div>
+<div>
+    <p id="label"></p>
+    <table  id="table" style="margin-top: 30px;margin-left: 30%;" border="1px">
+        <tr>
+            <td>Total Issues</td>
+            <td>In Last 24 hours</td>
+            <td>This week</td>
+            <td>Before this week</td>
+        </tr>
+        <tr>
+            <td id="1"></td>
+            <td id="2"></td>
+            <td id="3"></td>
+            <td id="4"></td>
+        </tr>
+    </table>
+</div>
+</body>
+<script src="JS/Issues.js"></script>
+</html>
